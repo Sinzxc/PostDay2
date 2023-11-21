@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/section"
+    android:layout_width="70dp"
+    android:layout_height="120dp"
+    android:visibility="visible">
+        <TextView
+            android:layout_width="70dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="15dp"
+            android:text="0"
+            android:textAlignment="center" />
+
+        <RelativeLayout
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:background="@drawable/secion"
+            android:layout_marginTop="30dp">
+            <RelativeLayout
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_centerInParent="true"
+                android:background="@drawable/cirlce_select"
+                android:visibility="invisible">
+
+            </RelativeLayout>
+
+    </RelativeLayout>
+    <RelativeLayout
+        android:layout_width="40dp"
+        android:layout_height="10dp"
+        android:layout_marginTop="105dp"
+        android:background="@drawable/arrow"
+        android:layout_centerHorizontal="true"
+        android:visibility="invisible">
+
+    </RelativeLayout>
+</RelativeLayout>
+

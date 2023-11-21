@@ -1,0 +1,8 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme. -->
+    <style name="Base.Theme.PostMachine" parent="Theme.Material3.DayNight.NoActionBar">
+       <item name="android:background">#12141F</item>
+    </style>
+
+    <style name="Theme.PostMachine" parent="Base.Theme.PostMachine" />
+</resources>
