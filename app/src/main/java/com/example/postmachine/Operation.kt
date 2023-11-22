@@ -12,6 +12,7 @@ class Operation {
     var number: Int?=null;
     var comand:Int?=null;
     var link:Int?=null;
+    var link2:Int?=null;
     constructor(_number:Int,_command:Int,_link:Int){
         if(_number!=null&&_command!=null&&_link!=null){
             number=_number;
