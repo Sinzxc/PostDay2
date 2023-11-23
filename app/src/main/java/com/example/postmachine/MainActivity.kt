@@ -1,5 +1,6 @@
 package com.example.postmachine
 
+import android.content.Intent
 import android.graphics.Path.Op
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -11,8 +12,10 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.HorizontalScrollView
 import android.widget.ImageButton
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.RelativeLayout
+import android.widget.Spinner
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.ActionBar
@@ -36,6 +39,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setTheme(R.style.Theme_PostMachine)
+        scroll=findViewById(R.id.scroll);
         selectInex=lineSize/2;
         line= listOf<Section>();
         commands= mutableListOf<Operation>();
@@ -43,87 +47,112 @@ class MainActivity : AppCompatActivity() {
             line+=Section(i);
         }
         TestComands()
+
+        scroll.post {
+            val centerX = scroll.getChildAt(0).width / 2
+            scroll.smoothScrollBy(centerX-this.resources.displayMetrics.widthPixels/2,0);
+        }
         AddListeners()
         DrawCommand()
+
     }
     fun AddListeners(){
         val tv:TextView=findViewById(R.id.textView2);
         layoutContainer=findViewById(R.id.sectionsWrap);
         DrawLine()
         findViewById<ImageButton>(R.id.playBtn).setOnClickListener{
+            if(commands.size==0)
+                return@setOnClickListener
+            ClearOk();
             stopCheck=false;
             lastCommandId=0;
             var runnable:Runnable =Runnable{
-                tv.post{
-                    findViewById<ImageButton>(R.id.playBtn).isEnabled=false;
-                }
-                var temp=0;
-                if(lastCommandId!=0)
-                {
-                    temp=1;
-                }
-                else
-                    temp=0;
-                for (i in commands.indices) {
-                    tv.post {
-                        stopCheck=false;
-                        if( lastCommandId in 0..commands.indices.last)
-                        {
-                            if(commands[lastCommandId].link!=null)
+                try {
+                    tv.post{
+                        findViewById<ImageButton>(R.id.playBtn).isEnabled=false;
+                    }
+                    while (commands[lastCommandId].comand!=-1) {
+                        tv.post {
+                            stopCheck=false;
+                            if( lastCommandId in commands.indices)
                             {
-                                CommandAplly(lastCommandId);
-                                DrawLine()
-                                val link =commands[lastCommandId].link
-                                lastCommandId= link!!-deleteCount;
+                                if(commands[lastCommandId].link!=null)
+                                {
+                                    CommandAplly(lastCommandId);
+                                    DrawLine()
+                                }
+                                else
+                                {
+                                    lastCommandId=0;
+                                    Toast.makeText(this, "Не заданы команды", Toast.LENGTH_SHORT).show()
+                                    stopCheck=true;
+                                }
+
                             }
                             else
-                            {
                                 lastCommandId=0;
-                                Toast.makeText(this, "Не заданы команды", Toast.LENGTH_SHORT).show()
-                                stopCheck=true;
-                            }
-
                         }
-                        else
-                            lastCommandId=0;
-
-
+                        Thread.sleep(frameDelay.toLong());
                     }
-                    Thread.sleep(frameDelay.toLong());
                 }
-                tv.post {
-                    findViewById<ImageButton>(R.id.playBtn).isEnabled=true;
-                }
+                catch (e:InterruptedException)
+                {}
             };
             thread=Thread(runnable)
             thread.start();
 
         }
-        findViewById<ImageButton>(R.id.refreshBtn).setOnClickListener{
-            stopCheck=true;
-            lastCommandId=0;
-            selectInex=lineSize/2;
-            for (i in line.indices)
-                line[i].checked=false;
-            DrawLine()
-            Toast.makeText(this, "Очищено", Toast.LENGTH_SHORT).show()
-            for(index in commands.indices)
-            {
-                var commandsWrap:LinearLayout=findViewById(R.id.commandWrap);
-                    (commandsWrap.getChildAt(index)as RelativeLayout).getChildAt(3).visibility=View.INVISIBLE;
+        findViewById<ImageView>(R.id.imageView4).setOnClickListener{
+            scroll.post {
+
+                    val centerX = scroll.getChildAt(0).width / 2
+                    scroll.smoothScrollTo(centerX-this.resources.displayMetrics.widthPixels/2,0);
+
             }
+        }
+        findViewById<ImageView>(R.id.imageView).setOnClickListener{
+            scroll.post {
+
+                val centerX = scroll.getChildAt(0).width / 2
+                scroll.smoothScrollTo(0,0);
+
+            }
+        }
+        findViewById<ImageView>(R.id.imageView5).setOnClickListener{
+            scroll.post {
+
+                val centerX = scroll.getChildAt(0).width / 2
+                scroll.smoothScrollTo(centerX*2,0);
+
+            }
+        }
+        findViewById<ImageButton>(R.id.imageButton5).setOnClickListener{
+            var intent:Intent= Intent(this@MainActivity,About::class.java);
+            startActivity(intent);
+        }
+        findViewById<ImageButton>(R.id.refreshBtn).setOnClickListener{
+                stopCheck = true;
+                lastCommandId = 0;
+                selectInex = lineSize / 2;
+                for (i in line.indices)
+                    line[i].checked = false;
+                DrawLine()
+                Toast.makeText(this, "Очищено", Toast.LENGTH_SHORT).show()
+                commands = mutableListOf<Operation>();
+                DrawCommand();
 
         }
+
         findViewById<ImageButton>(R.id.nextStep).setOnClickListener{
             stopCheck=false;
-            if( lastCommandId in 0..commands.indices.last)
+            if(commands.size==0|| stopCheck)
+                return@setOnClickListener;
+            if( lastCommandId in 0..commands.indices.last+1)
             {
                 if(commands[lastCommandId].link!=null)
                 {
                     CommandAplly(lastCommandId);
                     DrawLine()
-                    val link =commands[lastCommandId].link
-                    lastCommandId= link!!-deleteCount;
                 }
                 else
                 {
@@ -131,10 +160,13 @@ class MainActivity : AppCompatActivity() {
                     Toast.makeText(this, "Не заданы команды", Toast.LENGTH_SHORT).show()
                     stopCheck=true;
                 }
-
             }
             else
-                lastCommandId=0;
+            {
+
+                lastCommandId=-1;
+            }
+
         }
         findViewById<ImageButton>(R.id.moreBtn).setOnClickListener{
             val settings:ConstraintLayout=findViewById(R.id.settings);
@@ -150,28 +182,22 @@ class MainActivity : AppCompatActivity() {
         }
         tv.text="";
     }
+    fun ClearOk(){
+        for(index in 0..commands.indices.last+1)
+        {
+            var commandsWrap:LinearLayout=findViewById(R.id.commandWrap);
+            (commandsWrap.getChildAt(index)as RelativeLayout).getChildAt(3).visibility=View.INVISIBLE;
+        }
+    }
     fun TestComands(){
         /*
        Commands
         */
-        commands+=Operation(0,0,1);
-        commands+=Operation(1,1,2);
-        commands+=Operation(2,2,3);
-        commands+=Operation(3,2,4);
-        commands+=Operation(4,2,5);
-        commands+=Operation(5,2,6);
-        commands+=Operation(6,4,16);
-        commands[commands.size-1].link2=0;
-        commands+=Operation(7,2,8);
-        commands+=Operation(8,2,9);
-        commands+=Operation(9,2,10);
-        commands+=Operation(10,2,11);
-        commands+=Operation(11,2,12);
-        commands+=Operation(12,2,13);
-        commands+=Operation(13,2,14);
-        commands+=Operation(14,2,15);
-        commands+=Operation(15,2,16);
-        commands+=Operation(16,-1,2);
+        commands+=Operation(0,4,1);
+        commands[commands.size-1].link2=3;
+        commands+=Operation(1,2,2);
+        commands+=Operation(2,0,0);
+        commands+=Operation(3,-1,0);
         //
     }
     fun UpperCommain(){
@@ -192,8 +218,7 @@ class MainActivity : AppCompatActivity() {
 
     fun CommandAplly(index:Int){
         var commandsWrap:LinearLayout=findViewById(R.id.commandWrap);
-        if(index!=0)
-            (commandsWrap.getChildAt(index)as RelativeLayout).getChildAt(3).visibility=View.VISIBLE;
+        (commandsWrap.getChildAt(index+1)as RelativeLayout).getChildAt(3).visibility=View.VISIBLE;
         if(commands[index].comand==0) {
             if(selectInex!! > 0)
                 selectInex = selectInex!!-1;
@@ -204,7 +229,7 @@ class MainActivity : AppCompatActivity() {
             if(selectInex!!<lineSize)
                 selectInex = selectInex!!+1;
             else
-                selectInex = -0;
+                selectInex = 0;
         }
         if(selectInex in line.indices)
             if(selectInex!=lineSize&&selectInex!=0)
@@ -227,16 +252,27 @@ class MainActivity : AppCompatActivity() {
         {
             lastCommandId=0;
             Toast.makeText(this, "Выполненено", Toast.LENGTH_SHORT).show()
+            ClearOk()
         }
-        if(commands[lastCommandId].comand==4)
+        if(commands[lastCommandId].comand!=4)
         {
-//            if(!line[lastCommandId].checked)
-//            {
-//                lastCommandId=commands[lastCommandId].link2!!;
-//            }
-//            else
-//                lastCommandId=commands[lastCommandId].link!!;
+            val link =commands[lastCommandId].link
+            lastCommandId= link!!-deleteCount;
         }
+        else
+        {
+            if(line[selectInex!!].checked)
+            {
+                val link =commands[lastCommandId].link2
+                lastCommandId= link!!-deleteCount;
+            }
+            else
+            {
+                val link =commands[lastCommandId].link
+                lastCommandId= link!!-deleteCount;
+            }
+        }
+
     }
 
     fun DrawCommand(){
@@ -261,16 +297,78 @@ class MainActivity : AppCompatActivity() {
 
             ((newRelativeLayout.getChildAt(0)as TextView)).text=commands[i].number.toString();
             ((newRelativeLayout.getChildAt(1)as TextView)).text=commands[i].comand.toString();
-            ((newRelativeLayout.getChildAt(2)as TextView)).text=commands[i].link.toString();
+            if(commands[i].comand==-1)
+                ((newRelativeLayout.getChildAt(1)as TextView)).text="!"
+            if(commands[i].comand==0)
+                ((newRelativeLayout.getChildAt(1)as TextView)).text="←"
+            if(commands[i].comand==1)
+                ((newRelativeLayout.getChildAt(1)as TextView)).text="→"
+            if(commands[i].comand==2)
+                ((newRelativeLayout.getChildAt(1)as TextView)).text="V"
+            if(commands[i].comand==3)
+                ((newRelativeLayout.getChildAt(1)as TextView)).text="X"
+            if(commands[i].comand==4)
+                ((newRelativeLayout.getChildAt(1)as TextView)).text="?"
+            if(commands[i].comand!=4)
+                ((newRelativeLayout.getChildAt(2)as TextView)).text=commands[i].link.toString();
+            else
+                ((newRelativeLayout.getChildAt(2)as TextView)).text=commands[i].link.toString()+" "+commands[i].link2.toString();
             commandsWrap.addView(newRelativeLayout)
             newRelativeLayout.setId(i);
-            newRelativeLayout.setOnClickListener{
-                commands.removeAt(i);
-                UpperCommain();
-                DrawCommand()
-                deleteCount++;
+        }
+        val newRelativeLayout = layoutInflater.inflate(R.layout.card_add, null) as RelativeLayout
+        val params = ActionBar.LayoutParams(
+            ActionBar.LayoutParams.WRAP_CONTENT,
+            ActionBar.LayoutParams.WRAP_CONTENT
+        )
+        params.setMargins(0,0,0,0);
+        newRelativeLayout.layoutParams=params;
+        ((newRelativeLayout.getChildAt(3)as Button)).setOnClickListener{
+            var arg:Int=0;
+
+            if(((newRelativeLayout.getChildAt(1)as EditText)).text.length!=0)
+            {
+                arg=((newRelativeLayout.getChildAt(1)as EditText)).text.toString().toInt();
+                if(((newRelativeLayout.getChildAt(0)as Spinner)).selectedItemId.toInt() ==0)
+                {
+                    commands+=Operation(commands.size,-1,arg);
+                    DrawCommand();
+                }
+                if(((newRelativeLayout.getChildAt(0)as Spinner)).selectedItemId.toInt() ==1)
+                {
+                    commands+=Operation(commands.size,0,arg);
+                    DrawCommand();
+                }
+                if(((newRelativeLayout.getChildAt(0)as Spinner)).selectedItemId.toInt() ==2)
+                {
+                    commands+=Operation(commands.size,1,arg);
+                    DrawCommand();
+                }
+                if(((newRelativeLayout.getChildAt(0)as Spinner)).selectedItemId.toInt() ==3)
+                {
+                    commands+=Operation(commands.size,2,arg);
+                    DrawCommand();
+                }
+                if(((newRelativeLayout.getChildAt(0)as Spinner)).selectedItemId.toInt() ==4)
+                {
+                    commands+=Operation(commands.size,3,arg);
+                    DrawCommand();
+                }
+                if(((newRelativeLayout.getChildAt(0)as Spinner)).selectedItemId.toInt() ==5)
+                {
+                    ((newRelativeLayout.getChildAt(2)as EditText)).isEnabled=true;
+                    if(((newRelativeLayout.getChildAt(2)as EditText)).text.length!=0){
+                        commands+=Operation(commands.size,4,arg);
+                        commands[commands.size-1].link2=((newRelativeLayout.getChildAt(2)as EditText)).text.toString().toInt();
+                        commands[commands.indices.last].link2=((newRelativeLayout.getChildAt(2)as EditText)).text.toString().toInt();
+                        DrawCommand();
+                    }
+
+                }
+
             }
         }
+        commandsWrap.addView(newRelativeLayout);
     }
     fun DrawLine(){
         increment=((lineSize/50)*25).toInt();

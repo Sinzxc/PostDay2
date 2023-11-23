@@ -126,6 +126,7 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:background="#00FFFFFF"
+            android:visibility="invisible"
             app:srcCompat="@drawable/theme"
             tools:layout_editor_absoluteX="24dp"
             tools:layout_editor_absoluteY="22dp" />
