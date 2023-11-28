@@ -16,7 +16,7 @@
         android:visibility="visible">
 
         <View
-            android:id="@+id/view2"
+            android:id="@+id/view4"
             android:layout_width="10dp"
             android:layout_height="10dp"
             android:layout_marginLeft="5dp"
@@ -33,7 +33,7 @@
             android:layout_marginLeft="0dp"
             android:layout_marginTop="15dp"
             android:layout_weight="1"
-            android:text="TextView"
+            android:text="Number"
             android:textAlignment="center"
             android:textColor="#FFFFFF" />
 
@@ -52,7 +52,7 @@
             android:layout_centerVertical="true"
             android:layout_marginTop="15dp"
             android:layout_weight="1"
-            android:text="TextView"
+            android:text="Function"
             android:textAlignment="center"
             android:textColor="#FFFFFF" />
 
@@ -72,7 +72,7 @@
             android:layout_marginTop="15dp"
             android:layout_marginRight="0dp"
             android:layout_weight="1"
-            android:text="TextView"
+            android:text="Transitions"
             android:textAlignment="center"
             android:textColor="#FFFFFF" />
 

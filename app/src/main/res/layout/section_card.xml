@@ -10,6 +10,7 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="15dp"
             android:text="0"
+            android:textColor="#fff"
             android:textAlignment="center" />
 
         <RelativeLayout
@@ -18,8 +19,8 @@
             android:background="@drawable/secion"
             android:layout_marginTop="30dp">
             <RelativeLayout
-                android:layout_width="50dp"
-                android:layout_height="50dp"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
                 android:layout_centerInParent="true"
                 android:background="@drawable/cirlce_select"
                 android:visibility="invisible">

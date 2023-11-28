@@ -1,12 +1,25 @@
 package com.example.postmachine
 
-class Section {
-    var index:Int?=null;
-    var checked:Boolean=false;
-    constructor(_index:Int){
-        index=_index;
+class Section(inputIndex: Int) {
+    private var index:Int?= inputIndex
+    private var checked:Boolean=false
+
+    fun check(){
+        checked=!checked
     }
-    fun Check(){
-        checked=!checked;
+    fun setCheck(){
+        checked=true
+    }
+    fun setUncheck(){
+        checked=false
+    }
+    fun getChecked():Boolean{
+        return checked
+    }
+    fun getIndex():Int {
+        if(index!=null)
+            return index as Int
+
+        return 0
     }
 }

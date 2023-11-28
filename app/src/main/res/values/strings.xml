@@ -1,11 +1,11 @@
 <resources>
     <string name="app_name">PostMachine</string>
     <string-array name="operations">
-        <item>!</item>
         <item>←</item>
         <item>→</item>
         <item>V</item>
         <item>X</item>
         <item>？</item>
+        <item>!</item>
     </string-array>
 </resources>
