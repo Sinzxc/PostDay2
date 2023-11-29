@@ -305,6 +305,10 @@ class MainActivity : AppCompatActivity() {
                 }
                 Thread.sleep(1000);
             }
+            layoutContainer.post {
+
+                applyCommands()
+            }
         }
 
         var thread:Thread= Thread(runnable);
