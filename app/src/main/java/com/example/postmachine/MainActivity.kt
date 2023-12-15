@@ -21,6 +21,7 @@ import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.size
+import java.lang.Exception
 
 
 class MainActivity : AppCompatActivity() {
@@ -47,57 +48,62 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun applyCommands(){
-        val layoutContainer=findViewById<LinearLayout>(R.id.sectionsWrap)
-        operationCarrige.setNewLocation(lastCommandComplete)
-        if(commands.getCommands()[lastCommandComplete].getOperationId()==0&&(carriage.getCarriageLocation())!=0)
-            carriage.carriageLeft()
+        try {
+            val layoutContainer=findViewById<LinearLayout>(R.id.sectionsWrap)
+            operationCarrige.setNewLocation(lastCommandComplete)
+            if(commands.getCommands()[lastCommandComplete].getOperationId()==0&&(carriage.getCarriageLocation())!=0)
+                carriage.carriageLeft()
 
-        if(commands.getCommands()[lastCommandComplete].getOperationId()==10&&(carriage.getCarriageLocation())!=lineSize/2)
-            carriage.carriageRight()
+            if(commands.getCommands()[lastCommandComplete].getOperationId()==1&&(carriage.getCarriageLocation())!=lineSize/2)
+                carriage.carriageRight()
 
-        if(commands.getCommands()[lastCommandComplete].getOperationId()==2)
-        {
-            line[carriage.getCarriageLocation()].setCheck()
-            ((layoutContainer.getChildAt(carriage.getCarriageLocation())as RelativeLayout).getChildAt(1) as RelativeLayout).getChildAt(0).visibility=View.VISIBLE
-        }
-
-        if(commands.getCommands()[lastCommandComplete].getOperationId()==3)
-        {
-            line[carriage.getCarriageLocation()].setUncheck()
-            ((layoutContainer.getChildAt(carriage.getCarriageLocation())as RelativeLayout).getChildAt(1) as RelativeLayout).getChildAt(0).visibility=View.INVISIBLE
-        }
-
-        if(commands.getCommands()[lastCommandComplete].getOperationId()==3)
-        {
-            line[carriage.getCarriageLocation()].setUncheck()
-            ((layoutContainer.getChildAt(carriage.getCarriageLocation())as RelativeLayout).getChildAt(1) as RelativeLayout).getChildAt(0).visibility=View.INVISIBLE
-        }
-
-        if(commands.getCommands()[lastCommandComplete].getOperationId()==3)
-        {
-            line[carriage.getCarriageLocation()].setUncheck()
-            ((layoutContainer.getChildAt(carriage.getCarriageLocation())as RelativeLayout).getChildAt(1) as RelativeLayout).getChildAt(0).visibility=View.INVISIBLE
-        }
-        if(lastCommandComplete in 0..<commands.getCommands().indices.last &&commands.getCommands()[lastCommandComplete].getOperationId()!=5&&commands.getCommands()[lastCommandComplete].getOperationId()!=4)
-            lastCommandComplete=commands.getCommands()[lastCommandComplete].getLink()
-
-        else
-        {
-            if(commands.getCommands()[lastCommandComplete].getOperationId()!=4)
+            if(commands.getCommands()[lastCommandComplete].getOperationId()==2)
             {
-                lastCommandComplete=0
-                Toast.makeText(this, "Complete", Toast.LENGTH_SHORT).show()
+                line[carriage.getCarriageLocation()].setCheck()
+                ((layoutContainer.getChildAt(carriage.getCarriageLocation())as RelativeLayout).getChildAt(1) as RelativeLayout).getChildAt(0).visibility=View.VISIBLE
             }
+
+            if(commands.getCommands()[lastCommandComplete].getOperationId()==3)
+            {
+                line[carriage.getCarriageLocation()].setUncheck()
+                ((layoutContainer.getChildAt(carriage.getCarriageLocation())as RelativeLayout).getChildAt(1) as RelativeLayout).getChildAt(0).visibility=View.INVISIBLE
+            }
+
+            if(commands.getCommands()[lastCommandComplete].getOperationId()==3)
+            {
+                line[carriage.getCarriageLocation()].setUncheck()
+                ((layoutContainer.getChildAt(carriage.getCarriageLocation())as RelativeLayout).getChildAt(1) as RelativeLayout).getChildAt(0).visibility=View.INVISIBLE
+            }
+
+            if(commands.getCommands()[lastCommandComplete].getOperationId()==3)
+            {
+                line[carriage.getCarriageLocation()].setUncheck()
+                ((layoutContainer.getChildAt(carriage.getCarriageLocation())as RelativeLayout).getChildAt(1) as RelativeLayout).getChildAt(0).visibility=View.INVISIBLE
+            }
+            if(lastCommandComplete in 0..<commands.getCommands().indices.last &&commands.getCommands()[lastCommandComplete].getOperationId()!=5&&commands.getCommands()[lastCommandComplete].getOperationId()!=4)
+                lastCommandComplete=commands.getCommands()[lastCommandComplete].getLink()
+
             else
             {
-                lastCommandComplete = if(!line[carriage.getCarriageLocation()].getChecked())
-                    commands.getCommands()[lastCommandComplete].getLink()
+                if(commands.getCommands()[lastCommandComplete].getOperationId()!=4)
+                {
+                    lastCommandComplete=0
+                    Toast.makeText(this, "Complete", Toast.LENGTH_SHORT).show()
+                }
                 else
-                    commands.getCommands()[lastCommandComplete].getLink2()
+                {
+                    lastCommandComplete = if(!line[carriage.getCarriageLocation()].getChecked())
+                        commands.getCommands()[lastCommandComplete].getLink()
+                    else
+                        commands.getCommands()[lastCommandComplete].getLink2()
+                }
             }
+            carriageUpdate()
+            operationCarriageUpdate()
+        } catch (e:Exception){
+
         }
-        carriageUpdate()
-        operationCarriageUpdate()
+
     }
 
     @SuppressLint("InflateParams")
@@ -285,7 +291,7 @@ class MainActivity : AppCompatActivity() {
         findViewById<Spinner>(R.id.spinner).onItemSelectedListener = itemSelectedListener
     }
 
-    private fun operationCarriageUpdate(){
+        private fun operationCarriageUpdate(){
         val layoutContainer=findViewById<LinearLayout>(R.id.commandWrap)
         if (operationCarrige.getCarriageLocation()!=-1)
             ((layoutContainer.getChildAt(operationCarrige.getCarriageLocation()+1)as LinearLayout).getChildAt(0) as LinearLayout).getChildAt(0).visibility=View.VISIBLE
@@ -351,7 +357,6 @@ class MainActivity : AppCompatActivity() {
             val centerX = scroll.getChildAt(0).width / 2
             scroll.smoothScrollTo(centerX-this.resources.displayMetrics.widthPixels/2,0)
         }
-
     }
 
     private fun navigationCarriageListeners(){
